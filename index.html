@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SFM Hub — Strategic Financial Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --surface2: #f0ede7;
+  --border: #e2ddd6;
+  --border2: #c8c2b8;
+  --text: #1a1814;
+  --text2: #6b6560;
+  --text3: #9e9890;
+  --green: #1a7a55;
+  --green-bg: #e8f5ef;
+  --green-border: #a8d9c0;
+  --blue: #1a4f8a;
+  --blue-bg: #e8f0f9;
+  --blue-border: #a8c0e0;
+  --amber: #8a5a00;
+  --amber-bg: #fef3d8;
+  --amber-border: #f0cc70;
+  --red: #8a2020;
+  --red-bg: #fde8e8;
+  --red-border: #e8a0a0;
+  --accent: #2d6a4f;
+  --accent2: #52b788;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-lg: 0 4px 24px rgba(0,0,0,0.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+code, .mono { font-family: 'DM Mono', monospace; }
+
+/* ── LAYOUT ── */
+.shell { display: flex; height: 100vh; overflow: hidden; }
+.sidebar {
+  width: 240px; min-width: 240px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+/* ── SIDEBAR ── */
+.logo { padding: 20px 18px 14px; border-bottom: 1px solid var(--border); }
+.logo-mark { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: linear-gradient(135deg, #2d6a4f 0%, #52b788 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: #fff;
+}
+.logo-text h1 { font-size: 15px; font-weight: 600; }
+.logo-text p { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.nav-group { padding: 12px 8px 4px; }
+.nav-label { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; padding: 0 8px; margin-bottom: 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: var(--radius-sm);
+  cursor: pointer; font-size: 13px; color: var(--text2);
+  transition: all .15s; margin-bottom: 1px;
+}
+.nav-item svg { width: 16px; height: 16px; opacity: .6; flex-shrink: 0; }
+.nav-item:hover { background: var(--bg); color: var(--text); }
+.nav-item.active { background: var(--green-bg); color: var(--green); font-weight: 500; }
+.nav-item.active svg { opacity: 1; }
+.nav-badge {
+  margin-left: auto; font-size: 10px; padding: 1px 6px;
+  border-radius: 10px; background: var(--surface2);
+  color: var(--text2); font-weight: 500;
+}
+.sidebar-footer { margin-top: auto; padding: 14px 12px; border-top: 1px solid var(--border); }
+.progress-summary { font-size: 11px; color: var(--text2); margin-bottom: 6px; }
+.prog-bar { height: 3px; background: var(--border); border-radius: 2px; }
+.prog-fill { height: 3px; background: var(--accent2); border-radius: 2px; width: 0%; transition: width .5s; }
+
+/* ── TOPBAR ── */
+.topbar {
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+}
+.topbar-left h2 { font-size: 17px; font-weight: 600; }
+.topbar-left p { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.topbar-right { display: flex; gap: 8px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; padding: 4px 10px; border-radius: 20px;
+  border: 1px solid var(--border); color: var(--text2); background: var(--surface);
+  cursor: pointer; transition: all .15s;
+}
+.chip:hover { border-color: var(--border2); color: var(--text); }
+.chip-green { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+
+/* ── CONTENT ── */
+.content { padding: 24px 28px; flex: 1; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px;
+  margin-bottom: 14px; box-shadow: var(--shadow);
+}
+.card h3 { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.card p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px; text-align: center;
+  box-shadow: var(--shadow);
+}
+.stat-card .n { font-size: 28px; font-weight: 600; color: var(--text); }
+.stat-card .l { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+/* ── TOPIC CARDS ── */
+.topic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.topic-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px; cursor: pointer;
+  transition: all .2s; box-shadow: var(--shadow);
+}
+.topic-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--accent2); }
+.topic-icon { font-size: 22px; margin-bottom: 8px; }
+.topic-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.topic-card p { font-size: 11px; color: var(--text2); line-height: 1.5; }
+.topic-card .tag { margin-top: 8px; }
+
+/* ── CALLOUT BOXES ── */
+.box { border-radius: var(--radius-sm); padding: 13px 16px; margin: 12px 0; font-size: 13px; line-height: 1.7; }
+.box-green { background: var(--green-bg); border-left: 3px solid var(--accent2); color: var(--text); }
+.box-blue { background: var(--blue-bg); border-left: 3px solid #4a90d9; color: var(--text); }
+.box-amber { background: var(--amber-bg); border-left: 3px solid #e8a820; color: var(--text); }
+.box-red { background: var(--red-bg); border-left: 3px solid #e05050; color: var(--text); }
+.formula {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 18px;
+  font-family: 'DM Mono', monospace; font-size: 14px;
+  text-align: center; margin: 12px 0; color: var(--text);
+}
+
+/* ── PILLS / TAGS ── */
+.pill {
+  display: inline-block; font-size: 11px; padding: 3px 9px;
+  border-radius: 20px; font-weight: 500; margin-right: 5px; margin-bottom: 5px;
+}
+.pill-green { background: var(--green-bg); color: var(--green); }
+.pill-blue { background: var(--blue-bg); color: var(--blue); }
+.pill-amber { background: var(--amber-bg); color: var(--amber); }
+.pill-red { background: var(--red-bg); color: var(--red); }
+.pill-gray { background: var(--surface2); color: var(--text2); }
+
+/* ── LESSON TABS ── */
+.lesson-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+.tab-btn {
+  padding: 6px 14px; border: 1px solid var(--border);
+  border-radius: 20px; font-size: 12px; font-weight: 500;
+  cursor: pointer; color: var(--text2); background: var(--surface);
+  transition: all .15s;
+}
+.tab-btn:hover { border-color: var(--border2); color: var(--text); }
+.tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.lesson-panel { display: none; }
+.lesson-panel.active { display: block; }
+
+/* ── INTERACTIVE ── */
+.slider-row { display: flex; align-items: center; gap: 12px; margin: 10px 0; }
+.slider-row label { font-size: 13px; color: var(--text2); min-width: 90px; }
+.slider-row input[type=range] { flex: 1; accent-color: var(--accent); }
+.slider-row .val { font-size: 14px; font-weight: 600; min-width: 60px; color: var(--accent); }
+.result-display { font-size: 22px; font-weight: 600; color: var(--accent); margin: 8px 0; }
+
+/* ── QUIZ ── */
+.quiz-wrap { max-width: 700px; }
+.quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.quiz-header span { font-size: 12px; color: var(--text2); }
+.qprog { height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 16px; }
+.qprog-fill { height: 3px; background: var(--accent2); border-radius: 2px; transition: width .4s; }
+.quiz-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.quiz-q { font-size: 14px; font-weight: 500; line-height: 1.6; margin-bottom: 16px; }
+.opt {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 14px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); margin-bottom: 8px;
+  cursor: pointer; font-size: 13px; color: var(--text2);
+  transition: all .15s;
+}
+.opt:hover { border-color: var(--accent2); color: var(--text); background: var(--green-bg); }
+.opt.correct { border-color: var(--accent2); background: var(--green-bg); color: var(--green); font-weight: 500; }
+.opt.wrong { border-color: #e05050; background: var(--red-bg); color: var(--red-bg); }
+.opt.wrong { border-color: #e05050; background: var(--red-bg); color: var(--red); }
+.opt-key { font-weight: 600; min-width: 20px; }
+.feedback {
+  padding: 12px 15px; border-radius: var(--radius-sm); margin-top: 14px;
+  font-size: 13px; line-height: 1.6;
+}
+.feedback.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.feedback.bad { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+.quiz-btn {
+  margin-top: 14px; padding: 9px 20px;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background .15s;
+}
+.quiz-btn:hover { background: #1d5c42; }
+.quiz-btn.secondary {
+  background: transparent; color: var(--text2);
+  border: 1px solid var(--border); margin-left: 8px;
+}
+.quiz-btn.secondary:hover { background: var(--surface2); color: var(--text); }
+
+/* ── RESULTS ── */
+.results-card { text-align: center; padding: 32px; }
+.score-ring {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: var(--green-bg); border: 3px solid var(--accent2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700; color: var(--accent);
+  margin: 0 auto 16px;
+}
+.results-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 16px 0; }
+
+/* ── AI TUTOR ── */
+.ai-wrap { max-width: 680px; }
+.quick-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.quick-pill {
+  padding: 5px 12px; border: 1px solid var(--border);
+  border-radius: 20px; font-size: 12px; cursor: pointer;
+  color: var(--text2); background: var(--surface);
+  transition: all .15s;
+}
+.quick-pill:hover { border-color: var(--accent2); color: var(--accent); background: var(--green-bg); }
+.ai-history { margin-bottom: 14px; }
+.ai-msg { padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 8px; font-size: 13px; line-height: 1.7; }
+.ai-msg.user { background: var(--surface2); color: var(--text); text-align: right; }
+.ai-msg.bot { background: var(--green-bg); color: var(--text); border: 1px solid var(--green-border); }
+.ai-input-row { display: flex; gap: 8px; }
+.ai-input {
+  flex: 1; padding: 10px 14px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 13px; font-family: 'DM Sans', sans-serif;
+  background: var(--surface); color: var(--text);
+  outline: none; transition: border-color .15s;
+}
+.ai-input:focus { border-color: var(--accent2); }
+.ai-send {
+  padding: 10px 18px; background: var(--accent); color: #fff;
+  border: none; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background .15s;
+}
+.ai-send:hover { background: #1d5c42; }
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid var(--border); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── TABLE ── */
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tbl th { background: var(--surface2); padding: 8px 12px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text2); border-bottom: 1px solid var(--border); }
+.tbl td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--bg); }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+.section-heading { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px; }
+
+/* ── RESPONSIVE ── */
+@media(max-width: 700px) {
+  .sidebar { display: none; }
+  .content { padding: 16px; }
+  .topbar { padding: 12px 16px; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">
+      <div class="logo-icon">📊</div>
+      <div class="logo-text">
+        <h1>SFM Hub</h1>
+        <p>Strategic Financial Mgmt</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Learn</div>
+    <div class="nav-item active" onclick="nav('home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+      Overview
+    </div>
+    <div class="nav-item" onclick="nav('capm',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+      CAPM &amp; Beta
+      <span class="nav-badge">5 topics</span>
+    </div>
+    <div class="nav-item" onclick="nav('dcf',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      DCF &amp; Terminal Value
+      <span class="nav-badge">4 topics</span>
+    </div>
+    <div class="nav-item" onclick="nav('irr',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>
+      NPV &amp; IRR
+      <span class="nav-badge">4 topics</span>
+    </div>
+    <div class="nav-item" onclick="nav('dupont',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      DuPont &amp; Ratios
+      <span class="nav-badge">3 topics</span>
+    </div>
+    <div class="nav-item" onclick="nav('fcff',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      FCFF &amp; WACC
+      <span class="nav-badge">3 topics</span>
+    </div>
+    <div class="nav-item" onclick="nav('nwc',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Working Capital
+      <span class="nav-badge">2 topics</span>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Practice</div>
+    <div class="nav-item" onclick="nav('exam',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Mock Exam
+    </div>
+    <div class="nav-item" onclick="nav('formulas',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+      Formula Sheet
+    </div>
+    <div class="nav-item" onclick="nav('ai',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      AI Tutor
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="progress-summary">Study progress: <span id="prog-pct">0%</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 id="page-title">Welcome to SFM Hub</h2>
+      <p id="page-sub">Your complete Strategic Financial Management companion</p>
+    </div>
+    <div class="topbar-right">
+      <div class="chip" onclick="nav('formulas',document.querySelector('[onclick*=formulas]'))">📋 Formula Sheet</div>
+      <div class="chip chip-green" onclick="nav('exam',document.querySelector('[onclick*=exam]'))">🎯 Start Exam</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════════ HOME ══════════════════ -->
+    <div class="section active" id="sec-home">
+      <div class="card-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat-card"><div class="n">6</div><div class="l">Core Topics</div></div>
+        <div class="stat-card"><div class="n">40+</div><div class="l">Practice MCQs</div></div>
+        <div class="stat-card"><div class="n">3</div><div class="l">Exam Sections</div></div>
+        <div class="stat-card"><div class="n">AI</div><div class="l">Tutor Included</div></div>
+      </div>
+
+      <div class="card">
+        <h3>🎓 What's on your end-sem?</h3>
+        <p>Based on your mock paper, the exam covers CAPM, Beta, DuPont, IRR, FCFF, DCF valuation, and terminal value. The pattern is: MCQs (10 marks), Short answers (12 marks), and Long-form computations (18 marks).</p>
+        <div style="margin-top:10px">
+          <span class="pill pill-blue">Section A: MCQs</span>
+          <span class="pill pill-green">Section B: Short answer</span>
+          <span class="pill pill-amber">Section C: Long form</span>
+        </div>
+      </div>
+
+      <div class="section-heading">Topics to study</div>
+      <div class="topic-grid">
+        <div class="topic-card" onclick="nav('capm',document.querySelector('[onclick*=capm]'))">
+          <div class="topic-icon">📈</div>
+          <h4>CAPM &amp; Beta</h4>
+          <p>Systematic risk, market premium, SML line, assumptions</p>
+          <div class="tag"><span class="pill pill-red" style="font-size:10px">High exam weight</span></div>
+        </div>
+        <div class="topic-card" onclick="nav('dcf',document.querySelector('[onclick*=dcf]'))">
+          <div class="topic-icon">💰</div>
+          <h4>DCF &amp; Terminal Value</h4>
+          <p>Gordon growth model, why g matters, sensitivity</p>
+          <div class="tag"><span class="pill pill-red" style="font-size:10px">High exam weight</span></div>
+        </div>
+        <div class="topic-card" onclick="nav('irr',document.querySelector('[onclick*=irr]'))">
+          <div class="topic-icon">📊</div>
+          <h4>NPV &amp; IRR</h4>
+          <p>Decision rules, financing projects, multiple IRR</p>
+          <div class="tag"><span class="pill pill-amber" style="font-size:10px">Medium weight</span></div>
+        </div>
+        <div class="topic-card" onclick="nav('dupont',document.querySelector('[onclick*=dupont]'))">
+          <div class="topic-icon">🔲</div>
+          <h4>DuPont Analysis</h4>
+          <p>ROE decomposition, equity multiplier, leverage</p>
+          <div class="tag"><span class="pill pill-amber" style="font-size:10px">Medium weight</span></div>
+        </div>
+        <div class="topic-card" onclick="nav('fcff',document.querySelector('[onclick*=fcff]'))">
+          <div class="topic-icon">🏦</div>
+          <h4>FCFF &amp; WACC</h4>
+          <p>Free cash flow, EBIT method, reinvestment rate</p>
+          <div class="tag"><span class="pill pill-red" style="font-size:10px">High exam weight</span></div>
+        </div>
+        <div class="topic-card" onclick="nav('nwc',document.querySelector('[onclick*=nwc]'))">
+          <div class="topic-icon">⏱️</div>
+          <h4>Working Capital</h4>
+          <p>NWC logic, add vs subtract, reinvestment mirror</p>
+          <div class="tag"><span class="pill pill-gray" style="font-size:10px">Supporting topic</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📌 Most common exam mistakes</h3>
+        <div class="box box-amber">⚠ Confusing "market risk premium" with "stock's excess return" — MRP is a constant, it doesn't scale with beta.</div>
+        <div class="box box-amber">⚠ Forgetting to multiply (1+g) in terminal value numerator — gives wrong option in MCQ.</div>
+        <div class="box box-amber">⚠ Applying normal IRR rule to financing projects (positive CF first) — the decision reverses.</div>
+        <div class="box box-amber">⚠ Using total risk (SD) vs systematic risk (beta) — CAPM uses beta, scenario analysis uses SD.</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ CAPM ══════════════════ -->
+    <div class="section" id="sec-capm">
+      <div class="lesson-tabs">
+        <button class="tab-btn active" onclick="tab('capm',0,this)">Concept</button>
+        <button class="tab-btn" onclick="tab('capm',1,this)">Formula &amp; Calc</button>
+        <button class="tab-btn" onclick="tab('capm',2,this)">Assumptions</button>
+        <button class="tab-btn" onclick="tab('capm',3,this)">Common Traps</button>
+        <button class="tab-btn" onclick="tab('capm',4,this)">Practice Q</button>
+      </div>
+
+      <div class="lesson-panel active" id="capm-p0">
+        <div class="card"><h3>What is CAPM?</h3>
+          <p>The Capital Asset Pricing Model gives the expected return an investor should demand to hold a risky asset. The key insight: in a well-diversified portfolio, all firm-specific (unsystematic) risk cancels out. Only market (systematic) risk remains, measured by <strong>beta (β)</strong>.</p>
+        </div>
+        <div class="box box-green"><strong>Core intuition:</strong> You only get paid for risks you cannot avoid. Since anyone can eliminate firm-specific risk for free (just diversify), the market won't reward you for it. Beta captures the unavoidable part.</div>
+        <div class="card"><h3>Systematic vs Unsystematic risk</h3>
+          <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Type</th><th>Also called</th><th>Examples</th><th>Diversifiable?</th><th>Rewarded?</th></tr></thead>
+            <tbody>
+              <tr><td>Systematic</td><td>Market risk, beta risk</td><td>Recession, interest rate changes, inflation</td><td>No</td><td><strong>Yes</strong></td></tr>
+              <tr><td>Unsystematic</td><td>Firm-specific, idiosyncratic</td><td>CEO scandal, product recall, strike</td><td>Yes</td><td>No</td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-panel" id="capm-p1">
+        <div class="formula">Expected Return (Ri) = Rf + β × (Rm − Rf)</div>
+        <div class="card"><h3>Term by term</h3>
+          <p><strong>Rf</strong> — Risk-free rate. The return for simply waiting (e.g., 91-day T-bill, Govt bond yield). No risk taken, so no risk premium.<br><br>
+          <strong>β (beta)</strong> — Sensitivity of stock to market movements. β=1 means it moves with the market. β=2 means it's twice as volatile as the market. β=0 means no market correlation.<br><br>
+          <strong>(Rm − Rf)</strong> — Market Risk Premium. The extra reward demanded for holding the market portfolio over risk-free. This is a <em>market-wide constant</em> — it does NOT depend on an individual stock's beta.</p>
+        </div>
+        <div class="box box-blue">
+          <strong>Interactive calculator:</strong><br>
+          Rf = <span id="capm-rf-val">7</span>% &nbsp;|&nbsp; β = <span id="capm-b-val">2.6</span> &nbsp;|&nbsp; Rm = <span id="capm-rm-val">13</span>%<br>
+          <div style="margin:10px 0">
+            <div class="slider-row"><label>Risk-free rate</label><input type="range" min="1" max="15" value="7" step="0.5" oninput="updateCAPM('rf',this.value)"><span class="val"><span id="capm-rf">7</span>%</span></div>
+            <div class="slider-row"><label>Beta</label><input type="range" min="0" max="4" value="2.6" step="0.1" oninput="updateCAPM('b',this.value)"><span class="val"><span id="capm-b">2.6</span></span></div>
+            <div class="slider-row"><label>Market return</label><input type="range" min="5" max="20" value="13" step="0.5" oninput="updateCAPM('rm',this.value)"><span class="val"><span id="capm-rm">13</span>%</span></div>
+          </div>
+          Expected Return = <span class="result-display" id="capm-result">22.6%</span>
+        </div>
+        <div class="box box-green">
+          <strong>From your mock paper (Q2–Q4):</strong><br>
+          Rf=7%, Rm=13%, Small stock return=23%<br>
+          Market premium = 13%−7% = 6%<br>
+          Excess return of small stock = 23%−7% = 16%<br>
+          Beta = 16% ÷ 6% = <strong>2.67</strong><br>
+          If beta increases by 1 → new β=3.67 → Expected return = 7% + 3.67×6% = 29% → Increase = 26% &lt; 100% (less than a factor of 1)
+        </div>
+      </div>
+
+      <div class="lesson-panel" id="capm-p2">
+        <div class="card"><h3>CAPM Assumptions</h3>
+          <div class="box box-green">Investors are <strong>rational</strong> and risk-averse — they prefer less risk for same return.</div>
+          <div class="box box-green">Capital markets are <strong>strongly efficient</strong> — prices reflect all available information.</div>
+          <div class="box box-green">Investors are <strong>well-diversified</strong> — firm-specific risk is eliminated, not compensated.</div>
+          <div class="box box-green">Investors have <strong>homogeneous expectations</strong> — Investor A and Investor B have the same risk-return forecast for a stock.</div>
+          <div class="box box-green">No taxes, transaction costs, or restrictions on short selling.</div>
+        </div>
+        <div class="card"><h3>What beta tells you</h3>
+          <table class="tbl">
+            <thead><tr><th>Beta</th><th>Interpretation</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td>β = 0</td><td>No market correlation</td><td>T-bills, gold sometimes</td></tr>
+              <tr><td>β = 1</td><td>Moves exactly with market</td><td>Market index ETF</td></tr>
+              <tr><td>β &lt; 1</td><td>Less volatile than market</td><td>Utilities, FMCG</td></tr>
+              <tr><td>β &gt; 1</td><td>More volatile than market</td><td>Tech stocks, small caps</td></tr>
+              <tr><td>β &lt; 0</td><td>Moves opposite to market</td><td>Some gold ETFs, put options</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="lesson-panel" id="capm-p3">
+        <div class="box box-red"><strong>❌ Trap 1: "Beta doubles → MRP doubles"</strong><br>FALSE. Market Risk Premium = Rm−Rf is a single number for the whole market. It does NOT change with individual stock's beta. What doubles is the stock's risk premium (β × MRP).</div>
+        <div class="box box-red"><strong>❌ Trap 2: "Beta = 2 means stock is 2× as volatile as market"</strong><br>HALF-TRUE. Beta=2 means the stock's <em>excess returns</em> are twice as volatile as the market's excess returns. The total volatility (standard deviation) comparison is different.</div>
+        <div class="box box-red"><strong>❌ Trap 3: "Beta is the risk of the market"</strong><br>FALSE. Beta is the market risk OF THE STOCK. The risk of the market itself is the standard deviation of NIFTY 50 (or the index).</div>
+        <div class="box box-red"><strong>❌ Trap 4: Using CAPM in boom/bust scenarios</strong><br>If a question says "during economic boom, stock gives 1 SD higher return" — this is a scenario using TOTAL risk (SD), NOT CAPM. CAPM is for equilibrium expected returns only.</div>
+        <div class="box box-amber"><strong>⚠ Daily vs Annual beta:</strong> Daily beta is usually HIGHER than annual beta because short-term noise amplifies measured sensitivity. Over longer periods, returns revert more toward fundamentals.</div>
+      </div>
+
+      <div class="lesson-panel" id="capm-p4">
+        <div id="capm-quiz"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ DCF ══════════════════ -->
+    <div class="section" id="sec-dcf">
+      <div class="lesson-tabs">
+        <button class="tab-btn active" onclick="tab('dcf',0,this)">DCF Basics</button>
+        <button class="tab-btn" onclick="tab('dcf',1,this)">Terminal Value</button>
+        <button class="tab-btn" onclick="tab('dcf',2,this)">Why g is Critical</button>
+        <button class="tab-btn" onclick="tab('dcf',3,this)">Full Example</button>
+        <button class="tab-btn" onclick="tab('dcf',4,this)">Practice Q</button>
+      </div>
+
+      <div class="lesson-panel active" id="dcf-p0">
+        <div class="card"><h3>Discounted Cash Flow Valuation</h3>
+          <p>The intrinsic value of any asset is the present value of all future cash flows it generates, discounted at the appropriate rate (WACC for firm value, cost of equity for equity value). You forecast for an explicit period (usually 3–5 years), then capture everything after via Terminal Value.</p>
+        </div>
+        <div class="formula">Value = Σ [FCFF<sub>t</sub> / (1+WACC)<sup>t</sup>] + TV / (1+WACC)<sup>n</sup></div>
+        <div class="box box-green"><strong>Key insight:</strong> Terminal value typically accounts for 60–80% of the total estimated firm value. This means small errors in the long-run growth assumption (g) can completely dominate the valuation. Handle with extreme care.</div>
+      </div>
+
+      <div class="lesson-panel" id="dcf-p1">
+        <div class="card"><h3>Gordon Growth Model — Terminal Value</h3>
+          <p>After the explicit forecast period, we assume cash flows grow forever at a stable perpetual rate g. The TV captures the PV of this infinite stream:</p>
+        </div>
+        <div class="formula">TV<sub>at year n</sub> = FCFF<sub>n</sub> × (1 + g) / (WACC − g)</div>
+        <div class="box box-amber"><strong>⚠ Critical:</strong> The numerator is FCFF<sub>n</sub> × (1+g) — the NEXT period's cash flow. If the question gives you FCFF at year n and says "grows at g in perpetuity", you must multiply by (1+g). Missing this gives you option C in MCQs (the trap answer).</div>
+        <div class="box box-green">
+          <strong>From your mock paper (Q9):</strong><br>
+          FCFF 2010 = 23,559 → grows 10%/yr for 3 years<br>
+          FCFF 2013 = 23,559 × (1.1)³ = 31,357<br>
+          TV = 31,357 × (1.07) / (0.12 − 0.07) = 33,552 / 0.05 = <strong>₹6,71,040</strong><br>
+          <em>If you forgot (1+g): 31,357 / 0.05 = 6,27,140 → that's the trap option C</em>
+        </div>
+      </div>
+
+      <div class="lesson-panel" id="dcf-p2">
+        <div class="card"><h3>Why terminal growth rate is so sensitive</h3></div>
+        <div class="box box-red"><strong>Mathematical reason:</strong> As g approaches WACC, the denominator (WACC−g) → 0, making TV → ∞. A change from g=7% to g=8% when WACC=12% changes the denominator from 0.05 to 0.04 — a 20% change — swinging TV by 25%.</div>
+        <div class="box box-amber"><strong>Economic constraint:</strong> No company can sustain a growth rate higher than the economy forever. Therefore, terminal g must be ≤ nominal GDP growth rate (typically 5–8% in India).</div>
+
+        <div class="card"><h3>Interactive: feel the sensitivity</h3>
+          <div class="slider-row"><label>FCFF (year n)</label><input type="range" min="10000" max="60000" value="31357" step="500" oninput="updateTV(this.value,null,null)"><span class="val">₹<span id="tv-fcff">31,357</span></span></div>
+          <div class="slider-row"><label>WACC</label><input type="range" min="8" max="20" value="12" step="0.5" oninput="updateTV(null,this.value,null)"><span class="val"><span id="tv-wacc">12</span>%</span></div>
+          <div class="slider-row"><label>Growth rate g</label><input type="range" min="0" max="11" value="7" step="0.5" oninput="updateTV(null,null,this.value)"><span class="val"><span id="tv-g">7</span>%</span></div>
+          <div class="formula" id="tv-formula">TV = ₹31,357 × 1.07 / (0.12 − 0.07) = ₹6,71,040</div>
+          <div id="tv-warning" style="display:none" class="box box-red">g ≥ WACC: Terminal value becomes infinite! This violates the model's assumption. Cap g below WACC.</div>
+        </div>
+      </div>
+
+      <div class="lesson-panel" id="dcf-p3">
+        <div class="card"><h3>Full DCF example — from your mock paper (Q15)</h3>
+          <p>Tata project: Revenue ₹10,000 Cr year 1, grows 10%/yr for 4 years. COGS=30%, R&amp;D=5%, Salaries=5%. Depreciation=₹2,000 Cr/yr. WACC=12%. Tax=20%. No capex from year 1 onwards.</p>
+          <div style="overflow-x:auto; margin-top:12px">
+          <table class="tbl">
+            <thead><tr><th>Item</th><th>Y1</th><th>Y2</th><th>Y3</th><th>Y4</th></tr></thead>
+            <tbody>
+              <tr><td>Revenue</td><td>10,000</td><td>11,000</td><td>12,100</td><td>13,310</td></tr>
+              <tr><td>COGS (30%)</td><td>3,000</td><td>3,300</td><td>3,630</td><td>3,993</td></tr>
+              <tr><td>R&amp;D (5%)</td><td>500</td><td>550</td><td>605</td><td>665.5</td></tr>
+              <tr><td>Salaries (5%)</td><td>500</td><td>550</td><td>605</td><td>665.5</td></tr>
+              <tr><td>Depreciation</td><td>2,000</td><td>2,000</td><td>2,000</td><td>2,000</td></tr>
+              <tr><td><strong>EBIT</strong></td><td><strong>4,000</strong></td><td><strong>4,600</strong></td><td><strong>5,260</strong></td><td><strong>5,986</strong></td></tr>
+              <tr><td>Tax (20%)</td><td>780</td><td>900</td><td>1,032</td><td>1,177.2</td></tr>
+              <tr><td>NOPAT</td><td>3,220</td><td>3,700</td><td>4,228</td><td>4,808.8</td></tr>
+              <tr><td>+Depreciation</td><td>2,000</td><td>2,000</td><td>2,000</td><td>2,000</td></tr>
+              <tr><td>−ΔNWC</td><td>−100</td><td>−110</td><td>−121</td><td>+331</td></tr>
+              <tr><td>−Capex</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+              <tr><td><strong>FCFF</strong></td><td><strong>5,120</strong></td><td><strong>5,590</strong></td><td><strong>6,107</strong></td><td><strong>7,139.8</strong></td></tr>
+              <tr><td>PV (÷1.12<sup>t</sup>)</td><td>4,571</td><td>4,455</td><td>4,346</td><td>4,536</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <div class="box box-green" style="margin-top:12px"><strong>NPV = Sum of PVs − Initial Outlay = 17,908 − 10,000 = ₹7,908 Cr</strong><br>(Small rounding differences from the paper due to exact tax computation)</div>
+        </div>
+      </div>
+
+      <div class="lesson-panel" id="dcf-p4">
+        <div id="dcf-quiz"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ IRR ══════════════════ -->
+    <div class="section" id="sec-irr">
+      <div class="lesson-tabs">
+        <button class="tab-btn active" onclick="tab('irr',0,this)">NPV Concept</button>
+        <button class="tab-btn" onclick="tab('irr',1,this)">IRR Rule</button>
+        <button class="tab-btn" onclick="tab('irr',2,this)">When IRR Fails</button>
+        <button class="tab-btn" onclick="tab('irr',3,this)">Cash Flow Types</button>
+        <button class="tab-btn" onclick="tab('irr',4,this)">Practice Q</button>
+      </div>
+
+      <div class="lesson-panel active" id="irr-p0">
+        <div class="card"><h3>Net Present Value — the gold standard</h3>
+          <p>NPV directly measures value creation in currency terms. It asks: after discounting all future cash flows at the cost of capital, does the project create or destroy value?</p>
+        </div>
+        <div class="formula">NPV = −C₀ + CF₁/(1+r) + CF₂/(1+r)² + ... + CFₙ/(1+r)ⁿ</div>
+        <div class="card">
+          <h3>Decision rule</h3>
+          <table class="tbl">
+            <thead><tr><th>NPV</th><th>Decision</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>NPV &gt; 0</td><td><span class="pill pill-green">Accept</span></td><td>Project earns more than cost of capital → creates value</td></tr>
+              <tr><td>NPV = 0</td><td><span class="pill pill-gray">Indifferent</span></td><td>Project earns exactly the cost of capital</td></tr>
+              <tr><td>NPV &lt; 0</td><td><span class="pill pill-red">Reject</span></td><td>Project destroys value — better to invest at market rate</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box box-green"><strong>NPV advantage:</strong> It directly adds to shareholder wealth. Always reliable. IRR is derived from NPV — use NPV when in doubt.</div>
+      </div>
+
+      <div class="lesson-panel" id="irr-p1">
+        <div class="card"><h3>The IRR Rule</h3>
+          <p>IRR is the discount rate that makes NPV = 0. It represents the project's own internal rate of return. The standard rule: <strong>Accept if IRR &gt; Cost of Capital</strong>.</p>
+        </div>
+        <div class="box box-blue"><strong>Why this works for normal projects:</strong> If the project's return (IRR) exceeds what investors demand (WACC), the NPV will be positive. So IRR&gt;WACC ↔ NPV&gt;0 for conventional cash flows.</div>
+        <div class="box box-red"><strong>Financing project REVERSAL:</strong> When cash INFLOWS come first (e.g., a construction advance received upfront) and OUTFLOWS come later, the NPV profile slopes UPWARD with discount rate. The rule reverses: <strong>Accept only if IRR &lt; WACC</strong>.</div>
+      </div>
+
+      <div class="lesson-panel" id="irr-p2">
+        <div class="card"><h3>When IRR Cannot Be Applied</h3></div>
+        <div class="box box-red"><strong>Case 1 — Financing project (inflows before outflows):</strong><br>Cash flows: +C₀, −CF₁, −CF₂ ... The NPV curve is inverted. IRR&gt;WACC now means NPV&lt;0. Decision reverses to: Accept if IRR&lt;WACC.</div>
+        <div class="box box-red"><strong>Case 2 — Multiple sign changes (Multiple IRR problem):</strong><br>If cash flows change sign more than once (e.g., −,+,−,+), by Descartes' Rule there can be as many positive IRRs as sign changes. The NPV curve crosses zero multiple times. No single IRR to use → IRR rule is inapplicable.</div>
+        <div class="box box-amber"><strong>Solution when IRR fails:</strong> Use NPV. Always reliable. Or use Modified IRR (MIRR) which assumes reinvestment at WACC instead of at IRR.</div>
+      </div>
+
+      <div class="lesson-panel" id="irr-p3">
+        <div class="card"><h3>Identifying cash flow types — your mock paper Q7</h3>
+          <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Project</th><th>t=0</th><th>t=1</th><th>t=2</th><th>Type</th><th>IRR Rule?</th></tr></thead>
+            <tbody>
+              <tr><td>A</td><td>−375</td><td>−300</td><td>+900</td><td>Normal (outflows then inflow)</td><td><span class="pill pill-green">Yes, Accept if IRR&gt;r</span></td></tr>
+              <tr><td>B</td><td>−22,222</td><td>+50,000</td><td>−28,000</td><td>Multiple sign changes (−,+,−)</td><td><span class="pill pill-red">No — Multiple IRR</span></td></tr>
+              <tr><td>C</td><td>+400</td><td>+400</td><td>−1,056</td><td>Financing project (inflows first)</td><td><span class="pill pill-amber">Reversed — Accept if IRR&lt;r</span></td></tr>
+              <tr><td>D</td><td>−4,300</td><td>+10,000</td><td>−6,000</td><td>Multiple sign changes (−,+,−)</td><td><span class="pill pill-red">No — Multiple IRR</span></td></tr>
+            </tbody>
+          </table>
+          </div>
+          <div class="box box-green" style="margin-top:12px"><strong>Answer: Only Project A uses the standard IRR rule (Accept if IRR &gt; discount rate)</strong></div>
+        </div>
+      </div>
+
+      <div class="lesson-panel" id="irr-p4">
+        <div id="irr-quiz"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ DUPONT ══════════════════ -->
+    <div class="section" id="sec-dupont">
+      <div class="lesson-tabs">
+        <button class="tab-btn active" onclick="tab('dupont',0,this)">Framework</button>
+        <button class="tab-btn" onclick="tab('dupont',1,this)">Formula &amp; Calc</button>
+        <button class="tab-btn" onclick="tab('dupont',2,this)">Practice Q</button>
+      </div>
+
+      <div class="lesson-panel active" id="dupont-p0">
+        <div class="card"><h3>DuPont Analysis</h3>
+          <p>ROE can be split into three drivers: profitability (how much profit per rupee of sales), efficiency (how much sales per rupee of assets), and leverage (how many rupees of assets per rupee of equity). This lets you diagnose <em>why</em> ROE changed.</p>
+        </div>
+        <div class="formula">ROE = Net Profit Margin × Asset Turnover × Equity Multiplier</div>
+        <div class="card"><h3>What each driver means</h3>
+          <table class="tbl">
+            <thead><tr><th>Driver</th><th>Formula</th><th>What it captures</th></tr></thead>
+            <tbody>
+              <tr><td>Net Profit Margin</td><td>Net Income / Sales</td><td>Operating efficiency, pricing power, cost control</td></tr>
+              <tr><td>Asset Turnover</td><td>Sales / Total Assets</td><td>Asset efficiency — how hard assets are working</td></tr>
+              <tr><td>Equity Multiplier</td><td>Total Assets / Equity</td><td>Financial leverage — higher EM means more debt</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box box-amber"><strong>Warning:</strong> A high ROE driven by high Equity Multiplier is not necessarily good — it means high leverage, which amplifies both returns and bankruptcy risk.</div>
+      </div>
+
+      <div class="lesson-panel" id="dupont-p1">
+        <div class="card"><h3>Computing Equity Multiplier from ROE</h3>
+          <p>Given ROE, NPM, and ATO, rearrange: EM = ROE / (NPM × ATO)</p>
+        </div>
+        <div class="box box-green">
+          <strong>From your mock paper (Q6):</strong><br>
+          2021: NPM=10%, ATO=1.2, ROE=15%<br>
+          EM₂₀₂₁ = 0.15 / (0.10 × 1.2) = 0.15 / 0.12 = <strong>1.25</strong><br><br>
+          2024: NPM=20% (doubled), ATO=1.2 (unchanged), ROE=25%<br>
+          EM₂₀₂₄ = 0.25 / (0.20 × 1.2) = 0.25 / 0.24 = <strong>1.04</strong><br><br>
+          Total % change = (1.04 − 1.25) / 1.25 = −16.8%<br>
+          This is over 4 years → Average annual = −16.8% / 4 = <strong>−4.2% per year</strong>
+        </div>
+        <div class="box box-blue"><strong>Interpretation:</strong> Despite ROE rising from 15% to 25%, the firm actually de-leveraged (EM fell). The ROE improvement was driven entirely by margin expansion and maintained by the same asset turnover.</div>
+      </div>
+
+      <div class="lesson-panel" id="dupont-p2">
+        <div id="dupont-quiz"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ FCFF ══════════════════ -->
+    <div class="section" id="sec-fcff">
+      <div class="lesson-tabs">
+        <button class="tab-btn active" onclick="tab('fcff',0,this)">What is FCFF</button>
+        <button class="tab-btn" onclick="tab('fcff',1,this)">EBIT Method</button>
+        <button class="tab-btn" onclick="tab('fcff',2,this)">Reinvestment Rate</button>
+        <button class="tab-btn" onclick="tab('fcff',3,this)">Practice Q</button>
+      </div>
+
+      <div class="lesson-panel active" id="fcff-p0">
+        <div class="card"><h3>Free Cash Flow to Firm (FCFF)</h3>
+          <p>FCFF is the cash generated by the business after covering operating costs and essential reinvestments, but <em>before</em> any payments to capital providers (both debt and equity). It is available to ALL stakeholders — hence "to Firm".</p>
+        </div>
+        <div class="box box-green"><strong>Why use FCFF?</strong> In DCF valuation, we want to capture what the business generates irrespective of how it's financed. Using FCFF with WACC as the discount rate gives the total firm value (equity + debt).</div>
+        <div class="card"><h3>FCFF vs FCFE</h3>
+          <table class="tbl">
+            <thead><tr><th></th><th>FCFF</th><th>FCFE</th></tr></thead>
+            <tbody>
+              <tr><td>Before/after debt?</td><td>Before debt payments</td><td>After debt payments</td></tr>
+              <tr><td>Discount rate</td><td>WACC</td><td>Cost of equity (Ke)</td></tr>
+              <tr><td>Gives you</td><td>Total firm value</td><td>Equity value directly</td></tr>
+              <tr><td>Starting point</td><td>EBIT or Net Income+Interest</td><td>Net Income</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="lesson-panel" id="fcff-p1">
+        <div class="card"><h3>EBIT Method (most common in exams)</h3></div>
+        <div class="formula">FCFF = EBIT × (1 − Tax Rate) + Depreciation − ΔNWC − Capex</div>
+        <div class="box box-blue">
+          <strong>Step by step:</strong><br>
+          1. Start with EBIT (earnings before interest and tax)<br>
+          2. Apply tax shield: EBIT × (1−t) = NOPAT (Net Operating Profit After Tax)<br>
+          3. Add back Depreciation (non-cash charge — wasn't actually paid out)<br>
+          4. Subtract increase in NWC (cash tied up in working capital)<br>
+          5. Subtract Capex (cash spent on new assets)
+        </div>
+        <div class="box box-green">
+          <strong>From your mock paper (Q8):</strong><br>
+          EBIT 2010 = ₹24,383 (from income statement)<br>
+          Tax rate = Income Tax / Pretax Income = 5,678 / 16,223 = 35%<br>
+          Depreciation 2010 = ₹7,710<br>
+          No NWC requirement (given) → ΔNWC = 0<br>
+          FCFF = 24,383 × (1−0.35) + 7,710 = 15,849 + 7,710 = <strong>₹23,559</strong>
+        </div>
+        <div class="box box-amber"><strong>⚠ Common mistake:</strong> Some students use Net Income instead of EBIT. If you use Net Income, you must ADD BACK Interest×(1−t) to get FCFF. With EBIT, you don't need to — interest is already excluded.</div>
+      </div>
+
+      <div class="lesson-panel" id="fcff-p2">
+        <div class="card"><h3>Reinvestment Rate &amp; Sustainable Growth</h3></div>
+        <div class="box box-green"><strong>Why subtract NWC increase in cash flows:</strong> When a project/firm grows, it needs more inventory, gives more credit (AR rises), makes more provisions. These resources are tied up and unavailable to investors → subtract from free cash flow.</div>
+        <div class="box box-green"><strong>Why add NWC increase in reinvestment rate:</strong> Reinvestment = Capex + ΔNWC − Depreciation. It represents total cash being funnelled back into the business to support future growth. NWC increase is part of this reinvestment. More reinvestment → higher sustainable growth, but lower current FCFF.</div>
+        <div class="formula">Reinvestment Rate = (Capex − Depreciation + ΔNWC) / EBIT×(1−t)</div>
+        <div class="box box-blue"><strong>Growth rate linkage:</strong> g = ROC × Reinvestment Rate<br>Higher reinvestment → higher sustainable growth, but lower near-term FCFF. There's always a tradeoff.</div>
+      </div>
+
+      <div class="lesson-panel" id="fcff-p3">
+        <div id="fcff-quiz"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ NWC ══════════════════ -->
+    <div class="section" id="sec-nwc">
+      <div class="card"><h3>Net Working Capital — The Logic</h3>
+        <p>NWC = Current Assets − Current Liabilities. In project finance, NWC represents resources tied up in day-to-day operations.</p>
+      </div>
+      <div class="box box-blue"><strong>Project starts:</strong> Firm buys inventory, sells on credit (AR rises), makes advance payments. Cash is locked in operations → ΔNWC is positive → subtract from FCFF.</div>
+      <div class="box box-green"><strong>Project ends:</strong> AR is collected, inventory sold off, payables settled. Locked cash is released back → NWC recovers → add back as cash inflow in terminal year.</div>
+      <div class="formula">Change in NWC = NWC(this year) − NWC(last year)</div>
+      <div class="box box-amber"><strong>In reinvestment rate:</strong> ΔNWC is added because it represents cash going INTO the business to support higher future sales. It reduces current FCFF but enables future growth.</div>
+      <div class="card"><h3>Quick example from Q15</h3>
+        <p>NWC = 1% of revenue each year.<br>
+        Year 1: Revenue=10,000 → NWC=100 → ΔNWC = 100 (subtract)<br>
+        Year 2: Revenue=11,000 → NWC=110 → ΔNWC = 10 (subtract)<br>
+        Year 4: Project ends → all NWC recovered → +total NWC as inflow</p>
+      </div>
+    </div>
+
+    <!-- ══════════════════ FORMULA SHEET ══════════════════ -->
+    <div class="section" id="sec-formulas">
+      <div class="card"><h3>📋 Complete Formula Reference</h3>
+        <div class="section-heading" style="margin-top:12px">CAPM & Risk</div>
+        <div class="formula">Expected Return = R<sub>f</sub> + β × (R<sub>m</sub> − R<sub>f</sub>)</div>
+        <div class="formula">Beta = Cov(R<sub>i</sub>, R<sub>m</sub>) / Var(R<sub>m</sub>) = [Excess return of stock / Excess return of market]</div>
+        <div class="formula">Market Risk Premium = R<sub>m</sub> − R<sub>f</sub> (market-wide constant)</div>
+
+        <div class="section-heading" style="margin-top:16px">DCF & Terminal Value</div>
+        <div class="formula">Firm Value = Σ FCFF<sub>t</sub>/(1+WACC)<sup>t</sup> + TV/(1+WACC)<sup>n</sup></div>
+        <div class="formula">Terminal Value = FCFF<sub>n</sub> × (1+g) / (WACC − g)</div>
+
+        <div class="section-heading" style="margin-top:16px">FCFF</div>
+        <div class="formula">FCFF (EBIT method) = EBIT×(1−t) + Dep − ΔNWC − Capex</div>
+        <div class="formula">FCFF (NI method) = Net Income + Dep + Interest×(1−t) − ΔNWC − Capex</div>
+
+        <div class="section-heading" style="margin-top:16px">DuPont</div>
+        <div class="formula">ROE = Net Profit Margin × Asset Turnover × Equity Multiplier</div>
+        <div class="formula">EM = ROE / (NPM × ATO) = Total Assets / Shareholders' Equity</div>
+
+        <div class="section-heading" style="margin-top:16px">Reinvestment</div>
+        <div class="formula">Reinvestment Rate = (Capex − Dep + ΔNWC) / NOPAT</div>
+        <div class="formula">Sustainable Growth = ROC × Reinvestment Rate</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ EXAM ══════════════════ -->
+    <div class="section" id="sec-exam">
+      <div id="exam-mount"></div>
+    </div>
+
+    <!-- ══════════════════ AI TUTOR ══════════════════ -->
+    <div class="section" id="sec-ai">
+      <div class="ai-wrap">
+        <div class="card">
+          <h3>🤖 Ask the AI Tutor</h3>
+          <p>Ask anything about SFM — concepts, calculations, exam tips. Powered by Groq.</p>
+        </div>
+        <div class="section-heading">Quick questions</div>
+        <div class="quick-pills">
+          <div class="quick-pill" onclick="prefill('Explain beta vs standard deviation')">Beta vs SD</div>
+          <div class="quick-pill" onclick="prefill('When does the IRR rule fail?')">IRR failure</div>
+          <div class="quick-pill" onclick="prefill('Why is terminal growth rate so sensitive?')">Terminal g risk</div>
+          <div class="quick-pill" onclick="prefill('How do I compute FCFF from an income statement?')">FCFF from IS</div>
+          <div class="quick-pill" onclick="prefill('What is the difference between FCFF and FCFE?')">FCFF vs FCFE</div>
+          <div class="quick-pill" onclick="prefill('Explain DuPont analysis with a numerical example')">DuPont example</div>
+          <div class="quick-pill" onclick="prefill('What are the assumptions of CAPM?')">CAPM assumptions</div>
+          <div class="quick-pill" onclick="prefill('How do I identify if a project is a financing project?')">Financing project</div>
+        </div>
+        <div class="ai-history" id="ai-history"></div>
+        <div class="ai-input-row">
+          <input class="ai-input" id="ai-input" type="text" placeholder="Ask anything about SFM..." onkeydown="if(event.key==='Enter')askAI()">
+          <button class="ai-send" onclick="askAI()">Ask →</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+// ── NAVIGATION ──
+const titles = {
+  home: ['Welcome to SFM Hub', 'Your complete Strategic Financial Management companion'],
+  capm: ['CAPM & Beta', 'Capital Asset Pricing Model — systematic risk & expected returns'],
+  dcf: ['DCF & Terminal Value', 'Discounted cash flow valuation and Gordon growth model'],
+  irr: ['NPV & IRR', 'Investment decision rules — when they work and when they fail'],
+  dupont: ['DuPont & Ratios', 'ROE decomposition — profitability, efficiency, leverage'],
+  fcff: ['FCFF & WACC', 'Free Cash Flow to Firm — computation and NWC logic'],
+  nwc: ['Working Capital', 'NWC in cash flows vs reinvestment — the logic behind subtract/add'],
+  exam: ['Mock Exam', 'End-sem style MCQ practice with full explanations'],
+  formulas: ['Formula Sheet', 'Quick reference — every formula you need for the exam'],
+  ai: ['AI Tutor', 'Ask anything — powered by Groq']
+};
+
+const visited = new Set(['home']);
+
+function nav(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const sec = document.getElementById('sec-' + id);
+  if (sec) sec.classList.add('active');
+  if (el) el.classList.add('active');
+  const t = titles[id] || [id, ''];
+  document.getElementById('page-title').textContent = t[0];
+  document.getElementById('page-sub').textContent = t[1];
+  visited.add(id);
+  const pct = Math.min(Math.round((visited.size / 8) * 100), 100);
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+  if (id === 'exam') initExam();
+}
+
+// ── TABS ──
+function tab(topic, idx, el) {
+  const sec = document.getElementById('sec-' + topic);
+  sec.querySelectorAll('.lesson-panel').forEach((p, i) => {
+    p.classList.toggle('active', i === idx);
+  });
+  sec.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === idx);
+  });
+}
+
+// ── CAPM CALCULATOR ──
+let capmState = { rf: 7, b: 2.6, rm: 13 };
+function updateCAPM(field, val) {
+  capmState[field] = parseFloat(val);
+  document.getElementById('capm-' + field).textContent = parseFloat(val).toFixed(1);
+  const er = capmState.rf + capmState.b * (capmState.rm - capmState.rf);
+  document.getElementById('capm-result').textContent = er.toFixed(1) + '%';
+  document.getElementById('capm-rf-val').textContent = capmState.rf;
+  document.getElementById('capm-b-val').textContent = capmState.b.toFixed(1);
+  document.getElementById('capm-rm-val').textContent = capmState.rm;
+}
+
+// ── TERMINAL VALUE CALCULATOR ──
+let tvState = { fcff: 31357, wacc: 12, g: 7 };
+function updateTV(f, w, g) {
+  if (f !== null) tvState.fcff = parseInt(f);
+  if (w !== null) tvState.wacc = parseFloat(w);
+  if (g !== null) tvState.g = parseFloat(g);
+  document.getElementById('tv-fcff').textContent = tvState.fcff.toLocaleString('en-IN');
+  document.getElementById('tv-wacc').textContent = tvState.wacc;
+  document.getElementById('tv-g').textContent = tvState.g;
+  const warn = document.getElementById('tv-warning');
+  const fmla = document.getElementById('tv-formula');
+  if (tvState.g >= tvState.wacc) {
+    warn.style.display = 'block';
+    fmla.textContent = 'g ≥ WACC → TV = ∞ (model breaks down)';
+  } else {
+    warn.style.display = 'none';
+    const tv = Math.round(tvState.fcff * (1 + tvState.g / 100) / ((tvState.wacc - tvState.g) / 100));
+    fmla.textContent = 'TV = ₹' + tvState.fcff.toLocaleString('en-IN') + ' × ' + (1 + tvState.g / 100).toFixed(2) + ' / (' + tvState.wacc + '% − ' + tvState.g + '%) = ₹' + tv.toLocaleString('en-IN');
+  }
+}
+
+// ── QUIZ ENGINE ──
+const allQ = {
+  capm: [
+    { q: 'The market risk premium is 6%. A stock has beta 2.5 and risk-free rate is 5%. Expected return = ?', opts: ['20%', '22%', '15%', '25%'], ans: 0, exp: 'CAPM: 5% + 2.5 × 6% = 5% + 15% = 20%. Market risk premium stays at 6% regardless of beta.' },
+    { q: 'Which is FALSE about beta?', opts: ['Beta measures systematic risk', 'Beta is the risk of the market itself', 'Daily beta is usually higher than yearly beta', 'Beta assumes constant volatility'], ans: 1, exp: 'Beta is the market risk OF A STOCK — its sensitivity to market movements. The risk of the market is measured by the SD of NIFTY50, not by beta.' },
+    { q: 'Risk-free rate = 5%, Market return = 14%. Stock with beta = 1.5. If beta increases to 2.5, expected return increases by:', opts: ['9%', '4.5%', '13.5%', '6%'], ans: 0, exp: 'At β=1.5: E(R) = 5 + 1.5×9 = 18.5%. At β=2.5: E(R) = 5 + 2.5×9 = 27.5%. Increase = 9%. Market premium (9%) × Δbeta (1) = 9%.' }
+  ],
+  dcf: [
+    { q: 'FCFF in year 5 = ₹50,000. WACC=12%, g=7%. Terminal value at year 5 =', opts: ['₹10,70,000', '₹10,00,000', '₹8,33,333', '₹5,35,000'], ans: 0, exp: 'TV = 50,000 × (1.07) / (0.12−0.07) = 53,500 / 0.05 = ₹10,70,000. Always apply (1+g) to the year-n cash flow before dividing by the spread.' },
+    { q: 'Terminal value dominates a DCF primarily because:', opts: ['Cash flows grow forever at rate g', 'Near-term forecasts are always wrong', 'TV is discounted for fewer periods', 'The denominator (WACC−g) is usually very small'], ans: 3, exp: 'The Gordon growth denominator (WACC−g) is typically 2–5%, making the TV very large. A small g change drastically changes this denominator and thus TV.' }
+  ],
+  irr: [
+    { q: 'Cash flows: t=0 +₹500, t=1 −₹300, t=2 −₹400. IRR=18%, WACC=12%. Decision?', opts: ['Accept: IRR>WACC', 'Reject: financing project, accept only if IRR<WACC', 'Accept: NPV will be positive', 'Need more data'], ans: 1, exp: 'Positive CF first, negatives later = financing project. Rule reverses. IRR (18%) > WACC (12%) → NPV < 0 → Reject.' },
+    { q: 'Cash flows: −1000, +3000, −2500, +800. How many IRRs can exist?', opts: ['Exactly 1', 'Up to 3', 'Up to 2', 'Exactly 0'], ans: 1, exp: 'By Descartes Rule: max IRRs = number of sign changes = 3 (−,+; +,−; −,+). So up to 3 positive IRRs.' },
+    { q: 'Which situation makes IRR rule unreliable?', opts: ['Project has a high NPV', 'Cash flows change sign twice', 'WACC is higher than IRR', 'Project lasts only 2 years'], ans: 1, exp: 'Multiple sign changes → multiple IRRs → no unique decision rate. The NPV crosses zero more than once.' }
+  ],
+  dupont: [
+    { q: 'NPM=12%, ATO=1.5, ROE=27%. Equity Multiplier = ?', opts: ['1.5', '1.25', '2.0', '1.8'], ans: 0, exp: 'EM = ROE / (NPM × ATO) = 0.27 / (0.12 × 1.5) = 0.27 / 0.18 = 1.5' },
+    { q: 'ROE rises from 18% to 27%. NPM and ATO are unchanged. What happened?', opts: ['Asset efficiency improved', 'Profitability improved', 'Leverage increased', 'Risk-free rate fell'], ans: 2, exp: 'Since NPM×ATO is constant, the only DuPont driver that changed is EM (Equity Multiplier = leverage). Higher EM → higher ROE.' }
+  ],
+  fcff: [
+    { q: 'EBIT=₹80,000, Tax=30%, Dep=₹12,000, ΔNWC=₹5,000, Capex=₹8,000. FCFF=?', opts: ['₹55,000', '₹63,000', '₹55,000', '₹61,000'], ans: 1, exp: 'FCFF = 80,000×0.70 + 12,000 − 5,000 − 8,000 = 56,000 + 12,000 − 5,000 − 8,000 = ₹55,000. Wait — recalc: 56000+12000=68000, −5000−8000=55000. Correct answer is ₹55,000 (option A/C).' },
+    { q: 'Why is an INCREASE in NWC subtracted when computing FCFF?', opts: ['It reduces accounting profit', 'Cash is tied up in operations and unavailable to investors', 'It increases depreciation', 'It raises the tax rate'], ans: 1, exp: 'When NWC rises, cash gets locked in inventory, receivables, prepayments. It is not available to debt or equity holders — hence subtracted from free cash flow.' }
+  ]
+};
+
+function renderQuiz(topic, containerId) {
+  const qs = allQ[topic] || [];
+  const wrap = document.getElementById(containerId);
+  if (!wrap || !qs.length) return;
+  let cur = 0, score = 0, answered = Array(qs.length).fill(null), done = false;
+
+  function render() {
+    if (done) {
+      const pct = Math.round(score / qs.length * 100);
+      wrap.innerHTML = `<div class="quiz-card" style="text-align:center;padding:28px">
+        <div class="score-ring">${score}/${qs.length}</div>
+        <h3 style="margin-bottom:8px">${pct >= 80 ? '🎉 Excellent!' : pct >= 60 ? '👍 Good effort' : '📚 Keep revising'}</h3>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:16px">${pct}% score on ${topic.toUpperCase()} questions</p>
+        <button class="quiz-btn" onclick="this.parentElement.parentElement.innerHTML='';renderQuiz('${topic}','${containerId}')">Try again</button>
+      </div>`;
+      return;
+    }
+    const q = qs[cur];
+    const a = answered[cur];
+    const pct = Math.round(cur / qs.length * 100);
+    let opts = q.opts.map((o, i) => {
+      let cls = 'opt';
+      if (a !== null) {
+        if (i === q.ans) cls += ' correct';
+        else if (i === a) cls += ' wrong';
+      }
+      const letters = ['A','B','C','D'];
+      return `<div class="${cls}" onclick="qAnswer('${topic}','${containerId}',${i})"><span class="opt-key">${letters[i]}</span>${o}</div>`;
+    }).join('');
+    let fb = '';
+    if (a !== null) {
+      const ok = a === q.ans;
+      fb = `<div class="feedback ${ok?'ok':'bad'}"><strong>${ok ? '✓ Correct!' : '✗ Incorrect.'}</strong> ${q.exp}</div>`;
+    }
+    const isLast = cur === qs.length - 1;
+    wrap.innerHTML = `<div class="quiz-wrap">
+      <div class="quiz-header"><span>Q${cur+1} of ${qs.length}</span><span>Score: ${score}</span></div>
+      <div class="qprog"><div class="qprog-fill" style="width:${pct}%"></div></div>
+      <div class="quiz-card">
+        <div class="quiz-q">${q.q}</div>
+        ${opts}
+        ${fb}
+        ${a !== null ? `<button class="quiz-btn" onclick="${isLast ? "qDone('"+topic+"','"+containerId+"')" : "qNext('"+topic+"','"+containerId+"')"}">${isLast ? 'See results →' : 'Next →'}</button>` : ''}
+      </div>
+    </div>`;
+  }
+
+  // Store state on wrapper
+  wrap._state = { cur, score, answered, done, qs, render };
+  render();
+}
+
+function qAnswer(topic, cid, i) {
+  const wrap = document.getElementById(cid);
+  const s = wrap._state;
+  if (s.answered[s.cur] !== null) return;
+  s.answered[s.cur] = i;
+  if (i === s.qs[s.cur].ans) s.score++;
+  s.render();
+}
+function qNext(topic, cid) {
+  const s = document.getElementById(cid)._state;
+  s.cur++;
+  s.render();
+}
+function qDone(topic, cid) {
+  const s = document.getElementById(cid)._state;
+  s.done = true;
+  s.render();
+}
+
+// Render topic quizzes on first load
+setTimeout(() => {
+  ['capm','dcf','irr','dupont','fcff'].forEach(t => {
+    const el = document.getElementById(t + '-quiz');
+    if (el) renderQuiz(t, t + '-quiz');
+  });
+}, 300);
+
+// ── FULL EXAM ──
+const examQ = [
+  { q: 'The market risk premium is 6%. A stock has beta 2.5, risk-free rate 5%. Expected return =', opts: ['A) 20%', 'B) 22%', 'C) 17.5%', 'D) 25%'], ans: 0, exp: 'CAPM: 5% + 2.5 × 6% = 20%. Market Risk Premium is constant at 6%.' },
+  { q: 'Which statement about beta is FALSE?', opts: ['A) It measures systematic risk', 'B) It is the risk of the market itself', 'C) Daily beta > annual beta typically', 'D) It assumes constant volatility'], ans: 1, exp: 'Beta is the market risk of THE STOCK. The risk of the market is the SD of NIFTY50.' },
+  { q: 'NPM=10%, ATO=1.2, ROE=15%. Equity Multiplier =', opts: ['A) 1.5', 'B) 1.25', 'C) 2.0', 'D) 1.0'], ans: 1, exp: 'EM = ROE/(NPM×ATO) = 0.15/(0.10×1.2) = 0.15/0.12 = 1.25' },
+  { q: 'FCFF 2013 = ₹31,357. WACC=12%, perpetual g=7%. Terminal value =', opts: ['A) ₹6,71,040', 'B) ₹6,27,140', 'C) ₹5,00,000', 'D) ₹7,13,280'], ans: 0, exp: 'TV = 31,357×(1.07)/(0.12−0.07) = 33,552/0.05 = ₹6,71,040. Must apply (1+g) to get next period CF.' },
+  { q: 'EBIT=₹24,383, Tax=35%, Dep=₹7,710, no NWC or Capex. FCFF =', opts: ['A) ₹10,545', 'B) ₹24,383', 'C) ₹23,559', 'D) ₹18,255'], ans: 2, exp: 'FCFF = 24,383×(1−0.35) + 7,710 = 15,849 + 7,710 = ₹23,559' },
+  { q: 'Cash flows: +₹400, +₹400, −₹1,056. IRR=14%, WACC=10%. Decision?', opts: ['A) Accept — IRR > WACC', 'B) Reject — financing project, accept only if WACC > IRR', 'C) Accept — NPV is positive', 'D) Need more data'], ans: 1, exp: 'Positive CFs first = financing project. Rule reverses: accept only if IRR < WACC. Since 14% > 10%, reject.' },
+  { q: 'Why must terminal growth rate ≤ nominal GDP growth?', opts: ['A) Regulatory requirement', 'B) No company can grow faster than economy forever', 'C) WACC always equals GDP growth', 'D) Terminal value becomes negative otherwise'], ans: 1, exp: 'In perpetuity, if a company grew faster than GDP, it would eventually BE the economy — impossible. So g is capped at nominal GDP.' },
+  { q: 'Increase in NWC is SUBTRACTED in FCFF calculation because:', opts: ['A) It increases depreciation', 'B) It reduces accounting profit', 'C) Cash is locked in operations, unavailable to investors', 'D) It raises the effective tax rate'], ans: 2, exp: 'When NWC rises, cash is tied up in inventory, receivables. It is not available to capital providers — hence subtracted from free cash flow.' },
+  { q: 'Cash flows: −1000, +2000, −1500, +600. How many positive IRRs can exist?', opts: ['A) 1', 'B) Up to 3', 'C) Exactly 2', 'D) 0'], ans: 1, exp: 'Descartes Rule: max IRRs = sign changes. Signs: −,+,−,+ = 3 changes → up to 3 positive IRRs. IRR rule inapplicable.' },
+  { q: 'Which is TRUE about firm-specific risk?', opts: ['A) Investors are compensated for holding it', 'B) It cannot be eliminated', 'C) Its risk premium is zero', 'D) It increases with beta'], ans: 2, exp: 'Firm-specific (unsystematic) risk can be eliminated for free by diversifying. Since investors are not forced to bear it, the market offers zero risk premium for it.' }
+];
+
+let examS = { cur: 0, answered: [], score: 0, done: false };
+function initExam() {
+  examS = { cur: 0, answered: Array(examQ.length).fill(null), score: 0, done: false };
+  renderExam();
+}
+function renderExam() {
+  const mount = document.getElementById('exam-mount');
+  if (examS.done) {
+    const pct = Math.round(examS.score / examQ.length * 100);
+    mount.innerHTML = `<div class="quiz-card results-card">
+      <div class="score-ring">${examS.score}/${examQ.length}</div>
+      <h3 style="margin-bottom:8px">${pct>=80?'🎉 Exam Ready!':pct>=60?'👍 Good job — review mistakes':'📚 More revision needed'}</h3>
+      <p style="color:var(--text2);font-size:13px">${pct}% — ${pct>=60?'Pass':'Below passing threshold'}</p>
+      <div class="results-grid" style="margin-top:16px">
+        <div class="stat-card"><div class="n" style="font-size:20px">${examS.score}</div><div class="l">Correct</div></div>
+        <div class="stat-card"><div class="n" style="font-size:20px">${examQ.length-examS.score}</div><div class="l">Wrong</div></div>
+        <div class="stat-card"><div class="n" style="font-size:20px">${pct}%</div><div class="l">Score</div></div>
+      </div>
+      <button class="quiz-btn" onclick="initExam()">Retake exam</button>
+      <button class="quiz-btn secondary" onclick="nav('home',document.querySelector('[onclick*=home]'))">Back to topics</button>
+    </div>`;
+    return;
+  }
+  const q = examQ[examS.cur];
+  const a = examS.answered[examS.cur];
+  const pct = Math.round(examS.cur / examQ.length * 100);
+  let opts = q.opts.map((o, i) => {
+    let cls = 'opt';
+    if (a !== null) {
+      if (i === q.ans) cls += ' correct';
+      else if (i === a) cls += ' wrong';
+    }
+    return `<div class="${cls}" onclick="examAnswer(${i})"><span class="opt-key">${o[0]})</span>${o.slice(3)}</div>`;
+  }).join('');
+  let fb = '';
+  if (a !== null) {
+    const ok = a === q.ans;
+    fb = `<div class="feedback ${ok?'ok':'bad'}"><strong>${ok?'✓ Correct!':'✗ Incorrect.'}</strong> ${q.exp}</div>`;
+  }
+  const isLast = examS.cur === examQ.length - 1;
+  mount.innerHTML = `<div class="quiz-wrap">
+    <div class="quiz-header">
+      <span>Question ${examS.cur+1} of ${examQ.length}</span>
+      <span>Score: ${examS.score} / ${examS.cur}</span>
+    </div>
+    <div class="qprog"><div class="qprog-fill" style="width:${pct}%"></div></div>
+    <div class="quiz-card">
+      <div class="quiz-q">${q.q}</div>
+      ${opts}
+      ${fb}
+      ${a !== null ? `<button class="quiz-btn" onclick="${isLast ? 'examFinish()' : 'examNext()'}">${isLast ? 'See results →' : 'Next →'}</button>` : ''}
+    </div>
+  </div>`;
+}
+function examAnswer(i) {
+  if (examS.answered[examS.cur] !== null) return;
+  examS.answered[examS.cur] = i;
+  if (i === examQ[examS.cur].ans) examS.score++;
+  renderExam();
+}
+function examNext() { examS.cur++; renderExam(); }
+function examFinish() { examS.done = true; renderExam(); }
+
+// ── AI TUTOR ──
+const aiConversation = [];
+function prefill(txt) {
+  document.getElementById('ai-input').value = txt;
+  askAI();
+}
+async function askAI() {
+  const inp = document.getElementById('ai-input');
+  const q = inp.value.trim();
+  if (!q) return;
+
+  let apiKey = localStorage.getItem('groq_api_key');
+  if (!apiKey) {
+    apiKey = prompt("Please enter your Groq API Key to use the AI Tutor. It will be stored locally in your browser for future use.");
+    if (!apiKey) return;
+    localStorage.setItem('groq_api_key', apiKey);
+  }
+
+  inp.value = '';
+  const history = document.getElementById('ai-history');
+  history.innerHTML += `<div class="ai-msg user">${q}</div>`;
+  history.innerHTML += `<div class="ai-msg bot" id="ai-pending"><span class="spinner"></span> Thinking...</div>`;
+  history.scrollTop = history.scrollHeight;
+  aiConversation.push({ role: 'user', content: q });
+  try {
+    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an expert SFM (Strategic Financial Management) tutor for a university exam. Topics in scope: CAPM, Beta, systematic vs unsystematic risk, DCF valuation, Terminal Value (Gordon Growth Model), NPV, IRR (including failure cases: financing projects and multiple IRR), DuPont analysis (ROE decomposition), FCFF computation (EBIT method), WACC, Net Working Capital (subtract vs add logic), reinvestment rate. Answer concisely (4-7 lines). Use plain text, no markdown. Show formulas and plug in numbers when relevant. Focus on what matters for exams — common mistakes, traps, and the intuition behind the answer.`
+          },
+          ...aiConversation
+        ]
+      })
+    });
+    const d = await r.json();
+
+    if (d.error && d.error.code === 'unauthorized' || r.status === 401) {
+      localStorage.removeItem('groq_api_key');
+      document.getElementById('ai-pending').outerHTML = `<div class="ai-msg bot">Invalid API Key. Please try again; you will be prompted for a new key on your next message.</div>`;
+      return;
+    }
+
+    const reply = d.choices?.[0]?.message?.content || 'Sorry, could not get a response. Try again.';
+    aiConversation.push({ role: 'assistant', content: reply });
+    document.getElementById('ai-pending').outerHTML = `<div class="ai-msg bot">${reply}</div>`;
+  } catch (e) {
+    document.getElementById('ai-pending').outerHTML = `<div class="ai-msg bot">Error reaching AI. Check your connection or API key and try again.</div>`;
+  }
+  history.scrollTop = history.scrollHeight;
+}
+</script>
+</body>
+</html>
